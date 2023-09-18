@@ -5,7 +5,7 @@ class SocketsParentProcess
 {
     private array $elements = [];
     private array $sockets = [];
-    private bool $alive = false;
+    private bool $alive;
     private Socket $socket;
 
     public function __construct(
@@ -109,7 +109,7 @@ class SocketsParentProcess
         }
     }
 
-    private function closeChild($socketToClose): void
+    private function closeChild(Socket $socketToClose): void
     {
         foreach ($this->sockets as $key => $socket) {
             if ($socketToClose == $socket) {

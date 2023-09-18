@@ -1,6 +1,7 @@
 .PHONY: bench-single bench-single-jit \
 	test-jit bench-pipes bench-pipes-jit \
-	bench-pcntl-fork-sockets bench-pcntl-fork-sockets-jit \
+	bench-fork-sockets bench-fork-sockets-jit \
+	bench-fork-sockets-fibers bench-fork-sockets-fibers-jit \
 	docker-build docker-build-zts docker-run docker-run-zts
 
 ROOT_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
@@ -57,15 +58,28 @@ bench-pipes-jit:
 		-d opcache.jit=1255 \
 		$(ROOT_DIR)src/pipes/entry.php 1000000
 
-bench-pcntl-fork-sockets:
+bench-fork-sockets:
 	php -d opcache.enable=1 \
 		-d opcache.enable_cli=1 \
 		-d opcache.jit=0000 \
-		$(ROOT_DIR)src/pcntl-fork-sockets/entry.php 1000000
+		$(ROOT_DIR)src/fork-sockets/entry.php 1000000
 
-bench-pcntl-fork-sockets-jit:
+bench-fork-sockets-jit:
 	php -d opcache.enable=1 \
 		-d opcache.enable_cli=1 \
 		-d opcache.jit_buffer_size=100M \
 		-d opcache.jit=1255 \
-		$(ROOT_DIR)src/pcntl-fork-sockets/entry.php 1000000
+		$(ROOT_DIR)src/fork-sockets/entry.php 1000000
+
+bench-fork-sockets-fibers:
+	php -d opcache.enable=1 \
+		-d opcache.enable_cli=1 \
+		-d opcache.jit=0000 \
+		$(ROOT_DIR)src/fork-sockets-fibers/entry.php 1000000
+
+bench-fork-sockets-fibers-jit:
+	php -d opcache.enable=1 \
+		-d opcache.enable_cli=1 \
+		-d opcache.jit_buffer_size=100M \
+		-d opcache.jit=1255 \
+		$(ROOT_DIR)src/fork-sockets-fibers/entry.php 1000000
