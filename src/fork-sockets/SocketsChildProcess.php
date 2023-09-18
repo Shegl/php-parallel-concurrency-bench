@@ -21,21 +21,18 @@ class SocketsChildProcess
 
     private function readWriteLoop(): never
     {
-        // explode faster than unpack
-        while (true) {
-            $job = @socket_read($this->socket, 33);
-            if (!$job) {
-                $this->clear();
-                exit(0);
-            }
+        // implode/explode faster than pack/unpack
+        while ($job = socket_read($this->socket, 33)) {
             [$start, $end] = explode(':', $job);
             $primes = getPrimeNumberFromTo((int)$start, (int)$end);
-            @socket_write($this->socket, implode(',', $primes), ($end - $start) * 8);
+            @socket_write($this->socket, implode(',', $primes) . "\0", ($end - $start) * 8);
         }
+        $this->clear();
+        exit(0);
     }
 
     private function clear(): void
     {
-        @socket_close($this->socket);
+        socket_close($this->socket);
     }
 }
